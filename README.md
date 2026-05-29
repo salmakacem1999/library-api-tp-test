@@ -58,3 +58,30 @@ Erreur :
 ```json
 { "success": false, "error": "message d'erreur" }
 ```
+## Résultats des tests avant correction
+Sur 19 tests au total, **5 tests ont échoué**, ce qui nous a permis de détecter 4 bugs dans le code.
+
+#### 1. Filtre `?available=false` ne fonctionne pas : books.controller.js 
+-	Le test attendait uniquement les livres non disponibles, mais il a reçu les livres disponibles => books = books.filter((b) => b.available === true) toujours true 
+
+#### 2. Route `/search` inaccessible (2 tests échoués): books.routes.js 
+Route /search placée après /:id donc jamais atteinte :
+-	l'ordre des routes est mauvais donc on tombe sur /:id en premier et du coup en mettant / search c’est interprèter comme un id. on cherche donc un livre avec l'id "search", on ne le trouve pas => 404
+
+#### 3. Emprunter un livre ne le marque pas comme indisponible : books.controller.js
+Après un emprunt, le champ 'available' restait à 'true' au lieu de passer à 'fals' donc le livre est toujours marqué comme disponible
+
+#### 4. Supprimer un livre ne fonctionne pas vraiment: books.model.js 
+splice(book, 1)` utilisait l'objet livre au lieu de son index dans le tableau, donc rien n'était supprimé
+
+## Corrections apportées
+
+### src/routes/books.routes.js
+Déplacement de la route '/search' avant '/:id' pour qu'elle soit accessible.
+
+### src/controllers/books.controller.js
+- Ajout de 'available: false' lors d'un emprunt
+- Correction du filtre 'available' pour prendre en compte la valeur du paramètre
+
+### src/models/books.model.js
+- Remplacement de 'splice(book, 1)' par 'splice(idx, 1)' pour supprimer le bon élément

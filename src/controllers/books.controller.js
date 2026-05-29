@@ -7,7 +7,8 @@ const booksController = {
     let books = BookModel.findAll()
 
     if (available !== undefined) {
-      books = books.filter((b) => b.available === true)
+      const isAvailable = available === "true"
+      books = books.filter((b) => b.available === isAvailable)
     }
 
     res.json({ success: true, data: books })
@@ -79,6 +80,7 @@ const booksController = {
     }
 
     const updated = BookModel.update(req.params.id, {
+      available : false,
       borrower,
       borrowedAt: new Date().toISOString(),
     })

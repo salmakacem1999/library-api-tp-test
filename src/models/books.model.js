@@ -38,9 +38,11 @@ const BookModel = {
   },
 
   delete(id) {
-    const book = books.find((b) => b.id === parseInt(id))
-    if (!book) return null
-    books.splice(book, 1)
+    const idx = books.findIndex((b) => b.id === parseInt(id))
+
+    if (idx===-1) return null
+    const book = books[idx]
+    books.splice(idx, 1)
     return book
   },
 }
